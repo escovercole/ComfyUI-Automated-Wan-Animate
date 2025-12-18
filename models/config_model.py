@@ -28,6 +28,31 @@ class Workflow(BaseModel):
     prompts: List[str] = None
     influencer_configs: List[Influencer] = None
 
+    # -------------------------
+    # Helpers for ComfyUIClient
+    # -------------------------
+
+    def to_animate_dict(self) -> dict:
+        """Return a dict suitable for generate_animate_workflow"""
+        if self.type != "v2v":
+            raise ValueError("to_animate_dict called on non-V2V workflow")
+        return {
+            "workflow_file": self.workflow_file,
+            "inputs": self.inputs,
+            "output_node": self.output_node
+        }
+
+    def to_text2image_nodes(self) -> dict:
+        """Return node IDs for generate_text2image"""
+        if self.type != "t2i":
+            raise ValueError("to_text2image_nodes called on non-T2I workflow")
+        return {
+            "prompt": self.prompt_node_id,
+            "model": self.model_node_id,
+            "lora": self.lora_node_id,
+            "seed": self.seed_node_id
+        }
+
 class Config(BaseModel):
     comfyui_url: str
     input_base_folder: str

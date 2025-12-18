@@ -5,6 +5,7 @@ import requests
 import cv2
 import math
 from datetime import datetime
+from models.config_model import Workflow
 
 class ComfyUIClient:
     def __init__(self, comfy_url: str, output_folder: str):
@@ -54,26 +55,29 @@ class ComfyUIClient:
         cap.release()
         return math.ceil(total_frames * 16 / orig_fps)
 
-    def generate_animate_workflow(self, workflow_config: dict, inputs: dict, output_subfolder: str):
-        workflow = self.load_workflow(workflow_config["workflow_file"])
 
-        for key, node_id in workflow_config["inputs"].items():
+    def generate_animate_workflow(self, workflow: Workflow, inputs: dict, output_subfolder: str):
+        if workflow.type != "v2v":
+            raise ValueError("generate_animate_workflow only supports V2V workflows")
+
+        workflow_data = self.load_workflow(workflow.workflow_file)
+
+        for key, node_id in workflow.inputs.items():
             if key in inputs:
                 node_input_name = "image" if key in ("person", "background") else "video"
-                workflow[str(node_id)]["inputs"][node_input_name] = inputs[key]
+                workflow_data[str(node_id)]["inputs"][node_input_name] = inputs[key]
 
         video_path = inputs.get("video")
         if video_path:
-            if "num_frames" in workflow_config["inputs"]:
+            if "num_frames" in workflow.inputs:
                 frame_count = self.get_frame_count_for_16fps(video_path)
-                workflow[str(workflow_config["inputs"]["num_frames"])]["inputs"]["num_frames"] = frame_count
+                workflow_data[str(workflow.inputs["num_frames"])]["inputs"]["num_frames"] = frame_count
+            if "frame_window_size" in workflow.inputs:
+                workflow_data[str(workflow.inputs["frame_window_size"])]["inputs"]["frame_window_size"] = frame_count
 
-            if "frame_window_size" in workflow_config["inputs"]:
-                workflow[str(workflow_config["inputs"]["frame_window_size"])]["inputs"]["frame_window_size"] = frame_count
+        result = self.submit_workflow(workflow_data)
 
-        result = self.submit_workflow(workflow)
-
-        output_info = result["outputs"][str(workflow_config["output_node"])]["gifs"][0]
+        output_info = result["outputs"][str(workflow.output_node)]["gifs"][0]
         remote_path = output_info["fullpath"]
 
         output_dir = os.path.join(self.output_folder, output_subfolder)
@@ -88,23 +92,27 @@ class ComfyUIClient:
         return output_file
 
 
+
     def generate_text2image(
         self,
-        workflow_file,
-        nodes,
-        prompt,
-        loras,
-        model,
-        seed,
-        output_path
+        workflow: Workflow,
+        prompt: str,
+        loras: list[str],
+        seed: int,
+        output_path: str
     ):
-        workflow = self.load_workflow(workflow_file)
+        if workflow.type != "t2i":
+            raise ValueError("generate_text2image only supports T2I workflows")
 
-        workflow[str(nodes["prompt"])]["inputs"]["string"] = prompt
-        workflow[str(nodes["model"])]["inputs"]["unet_name"] = model
-        workflow[str(nodes["seed"])]["inputs"]["seed"] = seed
+        workflow_data = self.load_workflow(workflow.workflow_file)
 
-        lora_inputs = workflow[str(nodes["lora"])]["inputs"]
+        nodes = workflow.to_text2image_nodes()
+
+        workflow_data[str(nodes["prompt"])]["inputs"]["string"] = prompt
+        workflow_data[str(nodes["model"])]["inputs"]["unet_name"] = workflow.model
+        workflow_data[str(nodes["seed"])]["inputs"]["seed"] = seed
+
+        lora_inputs = workflow_data[str(nodes["lora"])]["inputs"]
         lora_inputs.clear()
 
         for i, lora in enumerate(loras):
@@ -114,7 +122,7 @@ class ComfyUIClient:
                 "strength": 1.0
             }
 
-        prompt_id = self._post_workflow(workflow)
+        prompt_id = self._post_workflow(workflow_data)
         result = self._wait_for_result(prompt_id)
 
         node_out = next(iter(result["outputs"].values()))
@@ -122,3 +130,4 @@ class ComfyUIClient:
 
         self._download_file(image_name, output_path)
         return output_path
+
