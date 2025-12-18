@@ -1,0 +1,29 @@
+{
+    "comfyui_url": "http://127.0.0.1:8004",
+
+    "src_video_folder": "C:/Development/downloader",
+    "background_folder": "C:/Development/pictures/background",
+    "workflow": "C:/Development/AI-Automation/ComfyUIWorkflows/WanAnimateSimple(api).json",
+    
+    "input_base_folder": "C:/Development/pictures",
+    "output_base_folder": "C:/Development/AutomatedPyImages/v2v",
+    "influencers":[
+        "Selena", "Prasanna", "Anika" ,"Zaria", "Yuna"
+    ],
+
+    "workflow_mode": "wan_simple",
+    "workflows": {
+        "wan_simple": {
+            "file": "C:/Development/AI-Automation/ComfyUIWorkflows/WanAnimateSimple(api).json",
+            "inputs": {
+                "video": 63,
+                "background": 207,
+                "person": 57,
+                "num_frames": 62,
+                "frame_window_size": 62
+            },
+            "output_node": 30
+        }
+    }
+
+}
