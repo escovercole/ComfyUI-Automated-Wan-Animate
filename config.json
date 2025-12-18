@@ -1,0 +1,48 @@
+{
+  "comfyui_url": "http://127.0.0.1:8004",
+  "input_base_folder": "C:/Development/pictures",
+  "output_base_folder": "C:/Development/AutomatedPyImages",
+  "active_workflow": "text2image",
+  "workflows": [
+    {
+      "name": "wan_v2v",
+      "type": "v2v",
+      "workflow_file": "C:/Development/AI-Automation/ComfyUIWorkflows/WanAnimateSimple(api).json",
+      "inputs": {
+        "video": 63,
+        "background": 207,
+        "person": 57,
+        "num_frames": 62,
+        "frame_window_size": 62
+      },
+      "output_node": 30,
+      "src_video_folder": "C:/Development/downloader",
+      "background_folder": "C:/Development/pictures/background",
+      "influencers": ["Selena", "Prasanna", "Anika", "Zaria", "Yuna"]
+    },
+    {
+      "name": "text2image",
+      "type": "t2i",
+      "workflow_file": "C:/Development/AI-Automation/ComfyUIWorkflows/TextToImageWorkflow.json",
+      "model_node_id": 148,
+      "prompt_node_id": 31,
+      "lora_node_id": 40,
+      "seed_node_id": 47,
+      "model": "flux1-dev.safetensors",
+      "output_filename_pattern": "{prefix}_{timestamp}.png",
+      "prompts": [
+        "portrait, smiling, vibrant background",
+        "fashion pose, studio lighting",
+        "cyberpunk theme, neon lights",
+        "casual street style"
+      ],
+      "influencers": [
+        {"name": "Selena", "lora": "selena_lora.safetensors", "keyword": "Selena:"},
+        {"name": "Prasanna", "lora": "prasanna_lora.safetensors", "keyword": "Prasanna:"},
+        {"name": "Anika", "lora": "anika_lora.safetensors", "keyword": "Anika:"},
+        {"name": "Zaria", "lora": "zaria_lora.safetensors", "keyword": "Zaria:"},
+        {"name": "Yuna", "lora": "yuna_lora.safetensors", "keyword": "Yuna:"}
+      ]
+    }
+  ]
+}
