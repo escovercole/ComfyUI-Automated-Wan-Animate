@@ -1,0 +1,503 @@
+{
+  "32": {
+    "inputs": {
+      "samples": [
+        "107",
+        0
+      ],
+      "vae": [
+        "104",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "102": {
+    "inputs": {
+      "text": "22 years old, full body, standing upright,\nfacing camera directly, shoulders square,\nneutral stance, feet slightly apart,\nmedium large breasts, slim waist,\narms relaxed at sides,\nsimple studio background,\neven soft lighting, no harsh shadows,\nfashion influencer photoshoot\n\n,\ncut-out bodysuit, high-leg design,\nstrategic side cutouts,\nsmooth fabric, fashion-forward\n",
+      "clip": [
+        "104",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive conditioning"
+    }
+  },
+  "103": {
+    "inputs": {
+      "text": "3d, cartoon, flash, shaved, underwear, fat",
+      "clip": [
+        "104",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative conditioning"
+    }
+  },
+  "104": {
+    "inputs": {
+      "ckpt_name": "biglust17_v17.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "107": {
+    "inputs": {
+      "seed": 758228055327229,
+      "steps": 35,
+      "cfg": 3,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 1,
+      "model": [
+        "108",
+        0
+      ],
+      "positive": [
+        "102",
+        0
+      ],
+      "negative": [
+        "103",
+        0
+      ],
+      "latent_image": [
+        "110",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "108": {
+    "inputs": {
+      "scale": 1.3,
+      "model": [
+        "109",
+        0
+      ]
+    },
+    "class_type": "PerturbedAttentionGuidance",
+    "_meta": {
+      "title": "PerturbedAttentionGuidance"
+    }
+  },
+  "109": {
+    "inputs": {
+      "sampling": "eps",
+      "zsnr": false,
+      "model": [
+        "151",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingDiscrete",
+    "_meta": {
+      "title": "ModelSamplingDiscrete"
+    }
+  },
+  "110": {
+    "inputs": {
+      "width": 720,
+      "height": 1280,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "111": {
+    "inputs": {
+      "model_name": "4x_NMKD-Siax_200k.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  },
+  "112": {
+    "inputs": {
+      "lora_name": "dmd2_sdxl_4step_lora_fp16.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "151",
+        0
+      ],
+      "clip": [
+        "104",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Load LoRA"
+    }
+  },
+  "115": {
+    "inputs": {
+      "upscale_model": [
+        "111",
+        0
+      ],
+      "image": [
+        "32",
+        0
+      ]
+    },
+    "class_type": "ImageUpscaleWithModel",
+    "_meta": {
+      "title": "Upscale Image (using Model)"
+    }
+  },
+  "116": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "scale_by": 0.5,
+      "image": [
+        "115",
+        0
+      ]
+    },
+    "class_type": "ImageScaleBy",
+    "_meta": {
+      "title": "Upscale Image By"
+    }
+  },
+  "117": {
+    "inputs": {
+      "pixels": [
+        "116",
+        0
+      ],
+      "vae": [
+        "104",
+        2
+      ]
+    },
+    "class_type": "VAEEncode",
+    "_meta": {
+      "title": "VAE Encode"
+    }
+  },
+  "118": {
+    "inputs": {
+      "add_noise": "enable",
+      "noise_seed": 709755461658875,
+      "steps": 70,
+      "cfg": 1,
+      "sampler_name": "lcm",
+      "scheduler": "normal",
+      "start_at_step": 66,
+      "end_at_step": 1000,
+      "return_with_leftover_noise": "disable",
+      "model": [
+        "112",
+        0
+      ],
+      "positive": [
+        "102",
+        0
+      ],
+      "negative": [
+        "103",
+        0
+      ],
+      "latent_image": [
+        "117",
+        0
+      ]
+    },
+    "class_type": "KSamplerAdvanced",
+    "_meta": {
+      "title": "KSampler (Advanced)"
+    }
+  },
+  "119": {
+    "inputs": {
+      "samples": [
+        "118",
+        0
+      ],
+      "vae": [
+        "104",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "138": {
+    "inputs": {
+      "model_name": "bbox/face_yolov8m.pt"
+    },
+    "class_type": "UltralyticsDetectorProvider",
+    "_meta": {
+      "title": "UltralyticsDetectorProvider"
+    }
+  },
+  "140": {
+    "inputs": {
+      "wildcard": "",
+      "Select to add LoRA": "Select the LoRA to add to the text",
+      "Select to add Wildcard": "Select the Wildcard to add to the text",
+      "model": [
+        "108",
+        0
+      ],
+      "clip": [
+        "104",
+        1
+      ],
+      "vae": [
+        "104",
+        2
+      ],
+      "positive": [
+        "102",
+        0
+      ],
+      "negative": [
+        "103",
+        0
+      ],
+      "refiner_model": [
+        "108",
+        0
+      ],
+      "refiner_clip": [
+        "104",
+        1
+      ],
+      "refiner_positive": [
+        "102",
+        0
+      ],
+      "refiner_negative": [
+        "103",
+        0
+      ],
+      "bbox_detector": [
+        "138",
+        0
+      ]
+    },
+    "class_type": "ToDetailerPipeSDXL",
+    "_meta": {
+      "title": "ToDetailerPipeSDXL"
+    }
+  },
+  "141": {
+    "inputs": {
+      "guide_size": 1280,
+      "guide_size_for": true,
+      "max_size": 1280,
+      "seed": 49375752612994,
+      "steps": 20,
+      "cfg": 3,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 0.3,
+      "feather": 10,
+      "noise_mask": true,
+      "force_inpaint": true,
+      "bbox_threshold": 0.5,
+      "bbox_dilation": 30,
+      "bbox_crop_factor": 3,
+      "sam_detection_hint": "center-1",
+      "sam_dilation": 0,
+      "sam_threshold": 0.93,
+      "sam_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.7,
+      "sam_mask_hint_use_negative": "False",
+      "drop_size": 10,
+      "refiner_ratio": 0,
+      "cycle": 1,
+      "inpaint_model": false,
+      "noise_mask_feather": 20,
+      "tiled_encode": false,
+      "tiled_decode": false,
+      "image": [
+        "119",
+        0
+      ],
+      "detailer_pipe": [
+        "140",
+        0
+      ]
+    },
+    "class_type": "FaceDetailerPipe",
+    "_meta": {
+      "title": "FaceDetailer (pipe)"
+    }
+  },
+  "144": {
+    "inputs": {
+      "wildcard": "",
+      "Select to add LoRA": "Select the LoRA to add to the text",
+      "Select to add Wildcard": "Select the Wildcard to add to the text",
+      "model": [
+        "108",
+        0
+      ],
+      "clip": [
+        "104",
+        1
+      ],
+      "vae": [
+        "104",
+        2
+      ],
+      "positive": [
+        "102",
+        0
+      ],
+      "negative": [
+        "103",
+        0
+      ],
+      "refiner_model": [
+        "108",
+        0
+      ],
+      "refiner_clip": [
+        "104",
+        1
+      ],
+      "refiner_positive": [
+        "102",
+        0
+      ],
+      "refiner_negative": [
+        "103",
+        0
+      ],
+      "bbox_detector": [
+        "145",
+        0
+      ]
+    },
+    "class_type": "ToDetailerPipeSDXL",
+    "_meta": {
+      "title": "ToDetailerPipeSDXL"
+    }
+  },
+  "145": {
+    "inputs": {
+      "model_name": "bbox/pussyV2.pt"
+    },
+    "class_type": "UltralyticsDetectorProvider",
+    "_meta": {
+      "title": "UltralyticsDetectorProvider"
+    }
+  },
+  "146": {
+    "inputs": {
+      "guide_size": 1280,
+      "guide_size_for": true,
+      "max_size": 1280,
+      "seed": 125989203474214,
+      "steps": 20,
+      "cfg": 2,
+      "sampler_name": "dpmpp_2m_sde",
+      "scheduler": "karras",
+      "denoise": 0.5,
+      "feather": 10,
+      "noise_mask": true,
+      "force_inpaint": true,
+      "bbox_threshold": 0.5,
+      "bbox_dilation": 104,
+      "bbox_crop_factor": 3,
+      "sam_detection_hint": "center-1",
+      "sam_dilation": 0,
+      "sam_threshold": 0.93,
+      "sam_bbox_expansion": 0,
+      "sam_mask_hint_threshold": 0.7,
+      "sam_mask_hint_use_negative": "False",
+      "drop_size": 10,
+      "refiner_ratio": 0,
+      "cycle": 1,
+      "inpaint_model": false,
+      "noise_mask_feather": 20,
+      "tiled_encode": false,
+      "tiled_decode": false,
+      "image": [
+        "141",
+        0
+      ],
+      "detailer_pipe": [
+        "144",
+        0
+      ]
+    },
+    "class_type": "FaceDetailerPipe",
+    "_meta": {
+      "title": "FaceDetailer (pipe)"
+    }
+  },
+  "150": {
+    "inputs": {
+      "filename_prefix": "ComfyUI",
+      "images": [
+        "146",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "151": {
+    "inputs": {
+      "lora_name": "influencers\\SDXL\\SelenaSDXLBigLust.safetensors",
+      "strength_model": 1,
+      "model": [
+        "104",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
+    }
+  },
+  "152": {
+    "inputs": {
+      "images": [
+        "141",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  },
+  "153": {
+    "inputs": {
+      "images": [
+        "146",
+        0
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  }
+}

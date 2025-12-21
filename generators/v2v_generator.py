@@ -14,24 +14,34 @@ class V2VGenerator:
     def construct_jobs(self):
         videos = list_valid(self.workflow.src_video_folder, is_video)
         backgrounds = list_valid(self.workflow.background_folder, is_image)
+        influencer_images = {}
+
+        # Preload all influencer images
+        for influencer_name in self.workflow.influencers:
+            influencer_dir = os.path.join(self.input_base_folder, influencer_name)
+            if os.path.isdir(influencer_dir):
+                influencer_images[influencer_name] = list_valid(influencer_dir, is_image)
+            else:
+                influencer_images[influencer_name] = []
 
         for video in videos:
             for background in backgrounds:
-                for influencer_name in self.workflow.influencers:
-                    influencer_dir = os.path.join(self.input_base_folder, influencer_name)
-                    if not os.path.isdir(influencer_dir):
-                        continue
-
-                    for img in list_valid(influencer_dir, is_image):
-                        yield {
-                            "video": video,
-                            "background": background,
-                            "person": img,
-                            "name": influencer_name
-                        }
+                # Interleave influencers
+                max_images = max(len(imgs) for imgs in influencer_images.values())
+                for i in range(max_images):
+                    for influencer_name, imgs in influencer_images.items():
+                        if i < len(imgs):
+                            yield {
+                                "video": video,
+                                "background": background,
+                                "person": imgs[i],
+                                "name": influencer_name
+                            }
 
     def run_batch(self):
-        for job in self.construct_jobs():
+        jobs = list(self.construct_jobs())
+        print(f"[V2V] Jobs found: {len(jobs)}")
+        for job in jobs:
             try:
                 output_subfolder = os.path.join("v2v", job["name"])
                 os.makedirs(os.path.join(self.output_base_folder, output_subfolder), exist_ok=True)
@@ -41,6 +51,12 @@ class V2VGenerator:
                     "background": job["background"],
                     "person": job["person"]
                 }
+
+                print(f"\n[V2V] Starting job:")
+                print(f"       Influencer: {job['name']}")
+                print(f"       Video: {os.path.basename(job['video'])}")
+                print(f"       Background: {os.path.basename(job['background'])}")
+                print(f"       Person Image: {os.path.basename(job['person'])}")
 
                 output_file = self.client.generate_animate_workflow(
                     workflow=self.workflow,

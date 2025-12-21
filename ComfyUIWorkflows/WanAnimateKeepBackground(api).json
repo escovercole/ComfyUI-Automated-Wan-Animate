@@ -1,7 +1,7 @@
 {
   "22": {
     "inputs": {
-      "model": "Wan22Animate\\Wan2_2-Animate-14B_fp8_e4m3fn_scaled_KJ.safetensors",
+      "model": "wan2_2\\Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors",
       "base_precision": "fp16_fast",
       "quantization": "disabled",
       "load_device": "offload_device",
@@ -20,7 +20,7 @@
   "27": {
     "inputs": {
       "steps": 4,
-      "cfg": 1.3,
+      "cfg": 1,
       "shift": 5,
       "seed": 42,
       "force_offload": true,
@@ -56,11 +56,11 @@
   },
   "28": {
     "inputs": {
-      "enable_vae_tiling": true,
-      "tile_x": 448,
-      "tile_y": 576,
-      "tile_stride_x": 288,
-      "tile_stride_y": 360,
+      "enable_vae_tiling": false,
+      "tile_x": 272,
+      "tile_y": 272,
+      "tile_stride_x": 144,
+      "tile_stride_y": 128,
       "normalization": "default",
       "vae": [
         "38",
@@ -78,7 +78,7 @@
   },
   "30": {
     "inputs": {
-      "frame_rate": 32,
+      "frame_rate": 30,
       "loop_count": 0,
       "filename_prefix": "Wanimate",
       "format": "video/h264-mp4",
@@ -87,13 +87,13 @@
       "save_metadata": true,
       "trim_to_audio": true,
       "pingpong": false,
-      "save_output": true,
+      "save_output": false,
       "images": [
-        "191",
+        "66",
         0
       ],
       "audio": [
-        "63",
+        "186",
         2
       ]
     },
@@ -121,13 +121,25 @@
   },
   "38": {
     "inputs": {
-      "model_name": "wan_2.1_vae.safetensors",
+      "model_name": "kj-Wan2_1_VAE_fp32.safetensors",
       "precision": "bf16",
       "use_cpu_cache": false
     },
     "class_type": "WanVideoVAELoader",
     "_meta": {
       "title": "WanVideo VAE Loader"
+    }
+  },
+  "42": {
+    "inputs": {
+      "image": [
+        "28",
+        0
+      ]
+    },
+    "class_type": "GetImageSizeAndCount",
+    "_meta": {
+      "title": "Get Image Size & Count"
     }
   },
   "48": {
@@ -164,7 +176,7 @@
   },
   "51": {
     "inputs": {
-      "blocks_to_swap": 25,
+      "blocks_to_swap": 0,
       "offload_img_emb": false,
       "offload_txt_emb": false,
       "use_non_blocking": true,
@@ -179,7 +191,7 @@
   },
   "57": {
     "inputs": {
-      "image": ""
+      "image": "Selena_3_20251221_020410.png"
     },
     "class_type": "LoadImage",
     "_meta": {
@@ -197,12 +209,12 @@
         0
       ],
       "num_frames": [
-        "63",
+        "186",
         1
       ],
       "force_offload": false,
       "frame_window_size": [
-        "63",
+        "186",
         1
       ],
       "colormatch": "disabled",
@@ -243,28 +255,6 @@
       "title": "WanVideo Animate Embeds"
     }
   },
-  "63": {
-    "inputs": {
-      "video": "",
-      "force_rate": 16,
-      "custom_width": [
-        "150",
-        0
-      ],
-      "custom_height": [
-        "151",
-        0
-      ],
-      "frame_load_cap": 0,
-      "skip_first_frames": 0,
-      "select_every_nth": 1,
-      "format": "AnimateDiff"
-    },
-    "class_type": "VHS_LoadVideo",
-    "_meta": {
-      "title": "Load Video (Upload) 🎥🅥🅗🅢"
-    }
-  },
   "64": {
     "inputs": {
       "width": [
@@ -293,9 +283,9 @@
   },
   "65": {
     "inputs": {
-      "model_name": "umt5-xxl-enc-bf16.safetensors",
+      "model_name": "umt5_xxl_fp16.safetensors",
       "precision": "bf16",
-      "positive_prompt": "Beautiful girl dancing, cute messy hair, imperfect hair",
+      "positive_prompt": "sexy girl dancing, messy cute hair",
       "negative_prompt": "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
       "quantization": "disabled",
       "use_disk_cache": false,
@@ -304,6 +294,26 @@
     "class_type": "WanVideoTextEncodeCached",
     "_meta": {
       "title": "WanVideo TextEncode Cached"
+    }
+  },
+  "66": {
+    "inputs": {
+      "inputcount": 2,
+      "direction": "left",
+      "match_image_size": true,
+      "Update inputs": null,
+      "image_1": [
+        "42",
+        0
+      ],
+      "image_2": [
+        "77",
+        0
+      ]
+    },
+    "class_type": "ImageConcatMulti",
+    "_meta": {
+      "title": "Image Concatenate Multi"
     }
   },
   "70": {
@@ -360,12 +370,40 @@
       "title": "Video Combine 🎥🅥🅗🅢"
     }
   },
+  "77": {
+    "inputs": {
+      "inputcount": 4,
+      "direction": "down",
+      "match_image_size": true,
+      "Update inputs": null,
+      "image_1": [
+        "64",
+        0
+      ],
+      "image_2": [
+        "172",
+        1
+      ],
+      "image_3": [
+        "173",
+        0
+      ],
+      "image_4": [
+        "186",
+        0
+      ]
+    },
+    "class_type": "ImageConcatMulti",
+    "_meta": {
+      "title": "Image Concatenate Multi"
+    }
+  },
   "99": {
     "inputs": {
       "color": "0, 0, 0",
       "device": "cpu",
       "image": [
-        "205",
+        "186",
         0
       ],
       "mask": [
@@ -443,7 +481,7 @@
   },
   "150": {
     "inputs": {
-      "value": 720
+      "value": 480
     },
     "class_type": "INTConstant",
     "_meta": {
@@ -452,7 +490,7 @@
   },
   "151": {
     "inputs": {
-      "value": 1280
+      "value": 832
     },
     "class_type": "INTConstant",
     "_meta": {
@@ -463,7 +501,7 @@
     "inputs": {
       "lora_0": "WanAnimate_relight_lora_fp16.safetensors",
       "strength_0": 1,
-      "lora_1": "lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors",
+      "lora_1": "lightx2v_I2V_14B_480p_cfg_step_distill_rank256_bf16.safetensors",
       "strength_1": 1.2,
       "lora_2": "none",
       "strength_2": 1,
@@ -563,7 +601,7 @@
   "180": {
     "inputs": {
       "image": [
-        "63",
+        "186",
         0
       ]
     },
@@ -614,76 +652,52 @@
       "title": "Grow Mask With Blur"
     }
   },
-  "191": {
+  "186": {
     "inputs": {
-      "ckpt_name": "rife47.pth",
-      "clear_cache_after_n_frames": 10,
-      "multiplier": 2,
-      "fast_mode": true,
-      "ensemble": true,
-      "scale_factor": 1,
-      "frames": [
-        "196",
+      "video": "C:\\Development\\downloader\\biancaalexandra.beauty_1636749962_2705576808413436329_48607102.mp4",
+      "force_rate": 0,
+      "custom_width": [
+        "150",
         0
-      ]
+      ],
+      "custom_height": [
+        "151",
+        0
+      ],
+      "frame_load_cap": 501,
+      "skip_first_frames": 50,
+      "select_every_nth": 1,
+      "format": "Wan"
     },
-    "class_type": "RIFE VFI",
+    "class_type": "VHS_LoadVideoPath",
     "_meta": {
-      "title": "RIFE VFI (recommend rife47 and rife49)"
+      "title": "Load Video (Path) 🎥🅥🅗🅢"
     }
   },
-  "196": {
+  "189": {
     "inputs": {
-      "facedetection": "retinaface_resnet50",
-      "model": "codeformer-v0.1.0.pth",
-      "visibility": 1,
-      "codeformer_weight": 0.7,
-      "image": [
+      "frame_rate": 30,
+      "loop_count": 0,
+      "filename_prefix": "Wanimate",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": true,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
         "28",
         0
-      ]
-    },
-    "class_type": "ReActorRestoreFace",
-    "_meta": {
-      "title": "Restore Face 🌌 ReActor"
-    }
-  },
-  "205": {
-    "inputs": {
-      "frames_between": 0,
-      "copy_frame": "previous",
-      "fill_mode": "copy_frame",
-      "quick_process_first_frames": 0,
-      "quick_process_last_frames": [
-        "63",
-        1
       ],
-      "process_F_L_frames_first": "yes",
-      "images": [
-        "207",
-        0
+      "audio": [
+        "186",
+        2
       ]
     },
-    "class_type": "QuickImageSequenceProcess",
+    "class_type": "VHS_VideoCombine",
     "_meta": {
-      "title": "Quick Image Sequence Process"
-    }
-  },
-  "207": {
-    "inputs": {
-      "image": "",
-      "resize": false,
-      "width": 720,
-      "height": 1280,
-      "repeat": 1,
-      "keep_proportion": false,
-      "divisible_by": 2,
-      "mask_channel": "alpha",
-      "background_color": ""
-    },
-    "class_type": "LoadAndResizeImage",
-    "_meta": {
-      "title": "Load & Resize Image"
+      "title": "Video Combine 🎥🅥🅗🅢"
     }
   }
 }

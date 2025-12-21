@@ -1,14 +1,12 @@
 import json
 from clients.comfy_client import ComfyUIClient
-from auto_generator import AutoGenerator
+from generators.auto_generator import AutoGenerator
 from models.config_model import Config
-from models.config_validator import validate_config
 
 
-def load_config(path: str = "config.json") -> Config:
-    with open(path, "r", encoding="utf-8") as f:
+def load_config() -> Config:
+    with open("config.json", "r", encoding="utf-8") as f:
         raw_config = json.load(f)
-    validate_config(raw_config)
     return Config.from_dict(raw_config)
 
 

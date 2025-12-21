@@ -6,10 +6,6 @@ from models.config_model import Workflow, Influencer
 
 class Text2ImageGenerator:
     def __init__(self, comfy_client: ComfyUIClient, workflow_config: Workflow):
-        """
-        :param comfy_client: ComfyUIClient instance
-        :param workflow_config: single T2I workflow from config (Workflow object)
-        """
         self.client = comfy_client
         self.workflow: Workflow = workflow_config
 
@@ -21,8 +17,14 @@ class Text2ImageGenerator:
 
         self.model = self.workflow.model
         self.output_pattern = self.workflow.output_filename_pattern
-        self.prompts = self.workflow.prompts or []
+
         self.influencers: list[Influencer] = self.workflow.influencer_configs or []
+
+        # 🔑 NEW — prompt composition inputs
+        self.pose_styles = self.workflow.pose_styles or []
+        self.outfits = self.workflow.outfits or []
+
+
 
     def _make_output_path(self, influencer_name: str, prompt_index: int) -> str:
         folder = os.path.join(self.client.output_folder, influencer_name)
@@ -32,25 +34,37 @@ class Text2ImageGenerator:
         return os.path.join(folder, filename)
 
     def run(self):
-        print(f"[T2I] Starting text-to-image generation for {len(self.influencers)} influencers...")
+        print(f"[T2I] Starting full influencer-pose-outfit generation...")
 
+        prompt_index = 0
+
+        # Loop through all combinations
         for influencer in self.influencers:
-            print(f"[T2I] Generating for influencer: {influencer.name}")
-            for i, prompt in enumerate(self.prompts):
-                full_prompt = f"{influencer.keyword} {prompt}".strip() if influencer.keyword else prompt
-                output_path = self._make_output_path(influencer.name, i)
+            for pose in self.pose_styles:
+                pose_prompt = pose["prompt"]
 
-                seed = random.randint(0, 2**32 - 1)
+                for outfit in self.outfits:
+                    full_prompt_parts = [
+                        pose_prompt,
+                        outfit,
+                        influencer.keyword
+                    ]
+                    full_prompt = ", ".join(p for p in full_prompt_parts if p).strip()
+                    output_path = self._make_output_path(influencer.name, prompt_index)
+                    seed = random.randint(0, 2**32 - 1)
 
-                try:
-                    self.client.generate_text2image(
-                        workflow=self.workflow,
-                        prompt=full_prompt,
-                        loras=[influencer.lora] if influencer.lora else [],
-                        seed=seed,
-                        output_path=output_path
-                    )
+                    try:
+                        self.client.generate_text2image(
+                            workflow=self.workflow,
+                            prompt=full_prompt,
+                            loras=[influencer.lora] if influencer.lora else [],
+                            seed=seed,
+                            output_path=output_path
+                        )
 
-                    print(f"[T2I] ✔ Saved → {output_path}")
-                except Exception as e:
-                    print(f"[T2I] ✖ ERROR generating '{full_prompt}' for {influencer.name}: {e}")
+                        print(f"[T2I] ✔ Generated: {influencer.name} | {pose['name']} | {outfit}")
+
+                    except Exception as e:
+                        print(f"[T2I] ✖ ERROR generating '{full_prompt}': {e}")
+
+                    prompt_index += 1

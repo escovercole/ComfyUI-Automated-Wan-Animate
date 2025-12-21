@@ -1,13 +1,33 @@
 {
-  "comfyui_url": "http://127.0.0.1:8004",
+  "comfyui_url": "http://127.0.0.1:8006",
   "input_base_folder": "C:/Development/pictures",
   "output_base_folder": "C:/Development/AutomatedPyImages",
-  "active_workflow": "text2image",
+  "active_workflow": "t2i_then_v2v",
   "workflows": [
+    {
+      "name": "t2i_then_v2v",
+      "type": "t2i_then_v2v",
+      "description": "Generate influencer images, then animate them",
+      "t2i_workflow": "text2image",
+      "v2v_workflow": "wan_v2v_keep_background"
+    },
+    {
+      "name": "wan_v2v_keep_background",
+      "type": "v2v",
+      "workflow_file": "C:/Development/ComfyUI-Automated-Wan-Animate/ComfyUIWorkflows/WanAnimateKeepBackground(api).json",
+      "uses_background": false,
+      "inputs": {
+        "video": 186,
+        "person": 57
+      },
+      "output_node": 189,
+      "src_video_folder": "C:/Development/downloader",
+      "influencers": ["Selena", "Prasanna", "Anika", "Zaria", "Yuna"]
+    },
     {
       "name": "wan_v2v",
       "type": "v2v",
-      "workflow_file": "C:/Development/AI-Automation/ComfyUIWorkflows/WanAnimateSimple(api).json",
+      "workflow_file": "C:/Development/ComfyUI-Automated-Wan-Animate/ComfyUIWorkflows/WanAnimateSimple(api).json",
       "inputs": {
         "video": 63,
         "background": 207,
@@ -23,26 +43,37 @@
     {
       "name": "text2image",
       "type": "t2i",
-      "workflow_file": "C:/Development/AI-Automation/ComfyUIWorkflows/TextToImageWorkflow.json",
+      "workflow_file": "C:/Development/ComfyUI-Automated-Wan-Animate/ComfyUIWorkflows/SDXL-influencer(api).json",
       "model_node_id": 148,
-      "prompt_node_id": 31,
-      "lora_node_id": 40,
-      "seed_node_id": 47,
+      "prompt_node_id": 102,
+      "negative_prompt_node_id": 103,
+      "lora_node_id": 151,
+      "seed_node_id": 107,
       "model": "flux1-dev.safetensors",
       "output_filename_pattern": "{prefix}_{timestamp}.png",
-      "prompts": [
-        "portrait, smiling, vibrant background",
-        "fashion pose, studio lighting",
-        "cyberpunk theme, neon lights",
-        "casual street style"
+      "pose_styles": [
+        {
+          "name": "ig_square_front",
+          "prompt": "22 years old, full body, standing upright, facing camera directly, shoulders square, neutral stance, feet slightly apart, arms relaxed at sides, medium large breasts, simple studio background, even soft lighting, fashion influencer photoshoot"
+        }
+      ],
+      "outfits": [
+        "high-leg bikini, matte fabric, thin straps"
       ],
       "influencers": [
-        {"name": "Selena", "lora": "selena_lora.safetensors", "keyword": "Selena:"},
-        {"name": "Prasanna", "lora": "prasanna_lora.safetensors", "keyword": "Prasanna:"},
-        {"name": "Anika", "lora": "anika_lora.safetensors", "keyword": "Anika:"},
-        {"name": "Zaria", "lora": "zaria_lora.safetensors", "keyword": "Zaria:"},
-        {"name": "Yuna", "lora": "yuna_lora.safetensors", "keyword": "Yuna:"}
+        {"name": "Selena", "lora": "influencers\\SDXL\\SelenaSDXLBigLust.safetensors", "keyword": "Selena:"},
+        {"name": "Prasanna", "lora": "influencers\\SDXL\\PrasannaSDXLBigLustv2.safetensors", "keyword": "Prasanna:"},
+        {"name": "Anika", "lora": "influencers\\SDXL\\AnikaSDXLBigLust.safetensors", "keyword": "Anika:"},
+        {"name": "Zaria", "lora": "influencers\\SDXL\\ZariaSDXLBigLustv2.safetensors", "keyword": "Zaria:"},
+        {"name": "Yuna", "lora": "influencers\\SDXL\\YunaSDXLBigLustv2.safetensors", "keyword": "Yuna:"}
       ]
     }
-  ]
+  ],
+
+  "sample_prompts":[
+        "high-leg bikini, matte fabric, thin straps",
+        "tight leotard, high-cut legs, minimal coverage, smooth fabric",
+        "ultra-short bodycon mini with crop top, stretch spandex fabric, skin-tight, elastic waistband, clubwear",
+        "one-piece swimsuit with plunging neckline, minimalist design"
+      ]
 }

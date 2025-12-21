@@ -108,24 +108,20 @@ class ComfyUIClient:
 
         nodes = workflow.to_text2image_nodes()
 
-        workflow_data[str(nodes["prompt"])]["inputs"]["string"] = prompt
-        workflow_data[str(nodes["model"])]["inputs"]["unet_name"] = workflow.model
+        workflow_data[str(nodes["prompt"])]["inputs"]["text"] = prompt
         workflow_data[str(nodes["seed"])]["inputs"]["seed"] = seed
 
-        lora_inputs = workflow_data[str(nodes["lora"])]["inputs"]
-        lora_inputs.clear()
+        if loras:
+            lora_node_id = str(nodes["lora"])
+            lora_inputs = workflow_data[lora_node_id]["inputs"]
 
-        for i, lora in enumerate(loras):
-            lora_inputs[f"lora_{i+1}"] = {
-                "on": True,
-                "lora": lora,
-                "strength": 1.0
-            }
+            lora_inputs["lora_name"] = loras[0]
+
 
         prompt_id = self._post_workflow(workflow_data)
         result = self._wait_for_result(prompt_id)
 
-        node_out = next(iter(result["outputs"].values()))
+        node_out = result["outputs"]["150"] 
         image_name = node_out["images"][0]["filename"]
 
         self._download_file(image_name, output_path)

@@ -9,24 +9,31 @@ class Influencer(BaseModel):
 class Workflow(BaseModel):
     name: str
     type: str  # "v2v" or "t2i"
-    workflow_file: str
+    workflow_file: str = None
 
     # V2V-specific
     inputs: Dict[str, int] = None
     output_node: int = None
     src_video_folder: str = None
+    uses_background: bool = True
     background_folder: str = None
     influencers: List[str] = None
 
     # T2I-specific
     model_node_id: int = None
     prompt_node_id: int = None
+    negative_prompt_node_id: int = None
     lora_node_id: int = None
     seed_node_id: int = None
     model: str = None
     output_filename_pattern: str = None
-    prompts: List[str] = None
+    pose_styles: List[dict] = None
+    outfits: List[str] = None
     influencer_configs: List[Influencer] = None
+
+     # For t2i_then_v2v workflow
+    t2i_workflow: str = None
+    v2v_workflow: str = None
 
     # -------------------------
     # Helpers for ComfyUIClient
@@ -44,13 +51,11 @@ class Workflow(BaseModel):
 
     def to_text2image_nodes(self) -> dict:
         """Return node IDs for generate_text2image"""
-        if self.type != "t2i":
-            raise ValueError("to_text2image_nodes called on non-T2I workflow")
         return {
             "prompt": self.prompt_node_id,
-            "model": self.model_node_id,
-            "lora": self.lora_node_id,
-            "seed": self.seed_node_id
+            "negative": self.negative_prompt_node_id,
+            "seed": self.seed_node_id,
+            "lora": self.lora_node_id
         }
 
 class Config(BaseModel):
